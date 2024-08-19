@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nim Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #game-board {
+            margin: 20px auto;
+            width: 300px;
+            border: 1px solid #000;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        #mode-selection {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="mode-selection">
+        <button onclick="startGame('player')">Player Starts First</button>
+        <button onclick="startGame('computer')">Computer Starts First</button>
+    </div>
+
+    <div id="game-board" style="display: none;">
+        <p>Current Number: <span id="current-number">0</span></p>
+        <button onclick="playerMove(1)">Add 1</button>
+        <button onclick="playerMove(2)">Add 2</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        let currentNumber = 0;
+        const targetNumber = 20;
+        let isPlayerTurn = true;
+
+        function startGame(firstPlayer) {
+            document.getElementById('mode-selection').style.display = 'none';
+            document.getElementById('game-board').style.display = 'block';
+
+            if (firstPlayer === 'computer') {
+                isPlayerTurn = false;
+                setTimeout(computerMove, 500); // Computer starts first after a slight delay
+            }
+        }
+
+        function playerMove(increment) {
+            if (!isPlayerTurn) return;
+
+            currentNumber += increment;
+            document.getElementById('current-number').textContent = currentNumber;
+
+            if (currentNumber >= targetNumber) {
+                document.getElementById('message').textContent = "You win!";
+                disableButtons();
+                return;
+            }
+
+            isPlayerTurn = false;
+            setTimeout(computerMove, 500); // slight delay for better UX
+        }
+
+        function computerMove() {
+            let bestMove = -1;
+            let bestScore = -Infinity;
+
+            for (let i = 1; i <= 2; i++) {
+                let newNumber = currentNumber + i;
+                let score = minimax(newNumber, false);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+
+            currentNumber += bestMove;
+            document.getElementById('current-number').textContent = currentNumber;
+
+            if (currentNumber >= targetNumber) {
+                document.getElementById('message').textContent = "Computer wins!";
+                disableButtons();
+                return;
+            }
+
+            isPlayerTurn = true;
+        }
+
+        function minimax(number, isMaximizing) {
+            if (number >= targetNumber) {
+                return isMaximizing ? -1 : 1;
+            }
+
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 1; i <= 2; i++) {
+                    let score = minimax(number + i, false);
+                    bestScore = Math.max(score, bestScore);
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 1; i <= 2; i++) {
+                    let score = minimax(number + i, true);
+                    bestScore = Math.min(score, bestScore);
+                }
+                return bestScore;
+            }
+        }
+
+        function disableButtons() {
+            document.querySelectorAll('button').forEach(button => {
+                button.disabled = true;
+            });
+        }
+    </script>
+</body>
+</html>
