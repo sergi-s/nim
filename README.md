@@ -11,7 +11,7 @@ You can choose who starts the game:
 2. **Computer Starts First**: Let the computer take the lead and try to catch up!
 
 ## How to Play
-1. Open the `nim.html` file in your web browser.
+1. Open the `index.html` file in your web browser.
 2. Choose who will start first by selecting the appropriate button.
 3. The game starts at 0. You can choose to add either 1 or 2 to the current number on your turn.
 4. The goal is to be the player who reaches 20 first.
